@@ -5,36 +5,20 @@
       color="primary"
       dark
     >
+      <v-spacer></v-spacer>
       <div class="d-flex align-center">
         <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
-
-        <v-img
-          alt="Vuetify Name"
+          alt="DrChrono Remote Patient Monitoring Logo"
           class="shrink mt-1 hidden-sm-and-down"
           contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
+          min-width="200"
+          src="https://www.drchrono.com/site_media/images/logos/drchrono_logo_black_1400x399.4cd8bfb2149e.png"
+          width="200"
         />
+
       </div>
-
-      <v-spacer></v-spacer>
-
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
+      <h1 id="product-name">Remote Patient Monitoring - FHIR app</h1>
+      <v-spacer></v-spacer>s
     </v-app-bar>
 
     <v-main>
@@ -58,3 +42,9 @@ export default {
   }),
 };
 </script>
+<style type="text/css">
+#product-name {
+  margin-top: 10px;
+  margin-left: 10px;
+}
+</style>
