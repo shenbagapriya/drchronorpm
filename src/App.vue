@@ -18,7 +18,7 @@
 
       </div>
       <h1 id="product-name">Remote Patient Monitoring - FHIR app</h1>
-      <v-spacer></v-spacer>s
+      <v-spacer></v-spacer>
     </v-app-bar>
 
     <v-main>
