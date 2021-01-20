@@ -57,6 +57,76 @@
       <v-card
         class="mx-auto"
         max-width="1080"
+        outlined
+      >
+        <v-toolbar
+          color="cyan"
+          dark
+          flat
+        >
+          <v-spacer></v-spacer>
+          <v-toolbar-title>REMOTE PATIENT MONITORING - OBSERVATIONS</v-toolbar-title>
+          <v-spacer></v-spacer>
+
+          <!--template v-slot:extension>
+            <v-tabs
+              v-model="tab"
+              align-with-title
+            >
+              <v-tabs-slider color="yellow"></v-tabs-slider>
+
+              <v-tab
+                v-for="rpmItem in rpmItems"
+                :key="rpmItem"
+              >
+                {{ rpmItem.text }}
+              </v-tab>
+            </v-tabs>
+          </template-->
+        </v-toolbar>
+        <v-row>
+          <v-col cols="3">
+            <v-btn
+              depressed
+              color="primary"
+              @click="setTemperature"
+            >
+              Body Temperature
+            </v-btn>
+          </v-col>
+          <v-col cols="3">
+            <v-btn
+              depressed
+              color="primary"
+              @click="setWeight"
+            >
+              Body Weight
+            </v-btn>
+          </v-col>
+          <v-col cols="3">
+            <v-btn
+              depressed
+              color="primary"
+              @click="setRespiratoryRate"
+            >
+              Respiratory Rate
+            </v-btn>
+          </v-col>
+          <v-col cols="3">
+            <v-btn
+              depressed
+              color="primary"
+              @click="setHeartRate"
+            >
+              Heart Rate
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-card>
+
+      <v-card
+        class="mx-auto"
+        max-width="1080"
         outlined>
         <v-card-text class="bold text-center">
           <span>PATIENT RPM OBSERVATIONS</span>
@@ -109,11 +179,18 @@
       users: [],
       patient: null,
       vitalSigns: [],
+      bodyTemperature: [],
+      bodyWeight: [],
+      respiratoryRate: [],
+      heartRate: [],
 
+
+      // Pagination
       page: 1,
       pageCount: 0,
       itemsPerPage: 25,
 
+      // Dashboard
       headers: [
         {
           text: 'Date Time',
@@ -124,14 +201,51 @@
         { text: 'Code', value: 'calories' },
         { text: 'Cateogy', value: 'fat' },
         { text: 'Value', value: 'carbs' },
-      ]
+      ],
+
+      // Tabs
+
+        tab: null,
+        rpmItems: [],
+        items: [
+          { text: 'Body Temperature', value: 'temp' },
+          { text: 'Body Weight', value: 'calories two' },
+          { text: 'Respiratory Rate', value: 'calories three' },
+          { text: 'Heart rate', value: 'calories four' },
+        ]
 
     }),
     mounted () {
-      this.getPatient(1741899)
-      this.getPatientObservation(1741899)
+      const patientId = 1741899
+      const temp_code = '8310-5'
+      const weight_code = '29463-7'
+      const resp_code = '9279-1'
+      const heart_code = '8867-4'
+
+      this.getPatient(patientId)
+      this.getPatientObservation(patientId)
+      this.getPatientObservationTemperature(patientId, temp_code)
+      this.getPatientObservationWeight(patientId, weight_code)
+      this.getPatientObservationRespiratoryRate(patientId, resp_code)
+      this.getPatientObservationHeartRate(patientId, heart_code)
+      // this.setRespiratoryRate()
+
+      // this.rpmItems.push({ text: 'Body Temperature', value: this.bodyTemperature, threshold: 100 })
+      //this.rpmItems.push({ text: 'Body Weight', value: this.bodyWeight, threshold: 90 })
     },
     methods: {
+      setTemperature: function () {
+        this.vitalSigns = this.bodyTemperature
+      },
+      setWeight: function () {
+        this.vitalSigns = this.bodyWeight
+      },
+      setRespiratoryRate: function () {
+        this.vitalSigns = this.respiratoryRate
+      },
+      setHeartRate: function () {
+        this.vitalSigns = this.heartRate
+      },
       getPatient: function (patientId) {
         const baseURI = 'http://hapi.fhir.org/baseR4/Patient/'+patientId
         this.$http.get(baseURI)
@@ -139,6 +253,35 @@
           this.patient = result.data
         })
       },
+      getPatientObservationTemperature: function (patientId, code) {
+        const baseURI = 'http://hapi.fhir.org/baseR4/Observation?patient='+patientId+'&category=vital-signs&code='+code
+        this.$http.get(baseURI)
+        .then((result) => {
+          this.bodyTemperature = result.data.entry
+        })
+      },
+      getPatientObservationWeight: function (patientId, code) {
+        const baseURI = 'http://hapi.fhir.org/baseR4/Observation?patient='+patientId+'&category=vital-signs&code='+code
+        this.$http.get(baseURI)
+        .then((result) => {
+          this.bodyWeight = result.data.entry
+        })
+      },
+      getPatientObservationRespiratoryRate: function (patientId, code) {
+        const baseURI = 'http://hapi.fhir.org/baseR4/Observation?patient='+patientId+'&category=vital-signs&code='+code
+        this.$http.get(baseURI)
+        .then((result) => {
+          this.respiratoryRate = result.data.entry
+        })
+      },
+      getPatientObservationHeartRate: function (patientId, code) {
+        const baseURI = 'http://hapi.fhir.org/baseR4/Observation?patient='+patientId+'&category=vital-signs&code='+code
+        this.$http.get(baseURI)
+        .then((result) => {
+          this.heartRate = result.data.entry
+        })
+      },
+      
       getPatientObservation: function (patientId) {
         const baseURI = 'http://hapi.fhir.org/baseR4/Observation?patient='+patientId
         this.$http.get(baseURI)
