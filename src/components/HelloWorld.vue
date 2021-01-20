@@ -44,7 +44,6 @@
                 <v-col cols="2"></v-col>
                 <v-col cols="4">{{patient.address[0].city}}, {{patient.address[0].state}}, {{patient.address[0].country}} - {{patient.address[0].postalCode}}</v-col>
               </v-row>
-              {{vitalSigns}}
             </v-list-item-subtitle>
           </v-list-item-content>
 
@@ -55,7 +54,49 @@
           ></v-list-item-avatar>
         </v-list-item>
       </v-card>
-
+      <v-card
+        class="mx-auto"
+        max-width="1080"
+        outlined>
+        <v-card-text class="bold text-center">
+          <span>PATIENT RPM OBSERVATIONS</span>
+        </v-card-text>
+        <v-row>
+          <v-col>
+            <v-data-table
+              :headers="headers"
+              :items="vitalSigns"
+              :page.sync="page"
+              :items-per-page="itemsPerPage"
+              hide-default-footer
+              class="elevation-1"
+              @page-count="pageCount = $event"
+            >
+              <template v-slot:item="{item}">
+                <tr>
+                  <td> {{item.resource.effectiveDateTime}} </td>
+                  <td> {{item.resource.code.text}} </td>
+                  <td> {{item.resource.code.coding[0].code}} </td>
+                  <td> 
+                    <span v-if="item.resource.valueQuantity">
+                      <span :class="{'error': item.resource.valueQuantity.value>10}">
+                      {{item.resource.valueQuantity.value}} {{item.resource.valueQuantity.unit}}
+                      </span>
+                    </span> 
+                  </td>
+                </tr>
+              </template>
+            </v-data-table>
+            <div class="text-center pt-2">
+              <v-pagination
+                v-model="page"
+                :length="pageCount"
+                color="warning"
+              />
+            </div>
+          </v-col>
+        </v-row>
+      </v-card>
     </div>
   </v-container>
 </template>
@@ -67,7 +108,24 @@
     data: () => ({
       users: [],
       patient: null,
-      vitalSigns: []
+      vitalSigns: [],
+
+      page: 1,
+      pageCount: 0,
+      itemsPerPage: 25,
+
+      headers: [
+        {
+          text: 'Date Time',
+          align: 'start',
+          sortable: false,
+          value: 'name',
+        },
+        { text: 'Code', value: 'calories' },
+        { text: 'Cateogy', value: 'fat' },
+        { text: 'Value', value: 'carbs' },
+      ]
+
     }),
     mounted () {
       this.getPatient(1741899)
@@ -82,10 +140,10 @@
         })
       },
       getPatientObservation: function (patientId) {
-        const baseURI = 'http://hapi.fhir.org/baseR4/Patient/'+patientId+'/Observation&category=vital-signs'
+        const baseURI = 'http://hapi.fhir.org/baseR4/Observation?patient='+patientId
         this.$http.get(baseURI)
         .then((result) => {
-          this.vitalSigns = result.data
+          this.vitalSigns = result.data.entry
         })
       }
 
